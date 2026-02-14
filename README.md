@@ -19,6 +19,8 @@ Elasticsearch 9.3.0용 한글 자모 분해 및 초성 추출 analysis 플러그
 
 ## 설치
 
+[GitHub Releases](https://github.com/irnd04/analysis-hangul-jamo/releases)에서 ZIP 파일을 다운로드하거나, 직접 빌드한 파일을 사용합니다.
+
 ```bash
 bin/elasticsearch-plugin install file:///path/to/analysis-hangul-jamo-{version}.zip
 ```
