@@ -9,6 +9,22 @@ Elasticsearch 9.3.0용 한글 자모 분해 및 초성 추출 analysis 플러그
 | `hangul_jamo` | 한글 음절 → 초+중+종 자모 분해 | 이재국 → ㅇㅣㅈㅐㄱㅜㄱ |
 | `hangul_chosung` | 한글 음절 → 초성만 추출 | 이재국 → ㅇㅈㄱ |
 
+## 빌드
+
+```bash
+./gradlew bundlePlugin
+```
+
+`build/distributions/analysis-hangul-jamo-{version}.zip` 파일이 생성됩니다.
+
+## 설치
+
+```bash
+bin/elasticsearch-plugin install file:///path/to/analysis-hangul-jamo-{version}.zip
+```
+
+설치 후 Elasticsearch를 재시작해야 합니다.
+
 ## Docker로 테스트
 
 ```bash
