@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+}
+
+group = 'kr.jemi'
+version = '1.0-SNAPSHOT'
+
+ext {
+    esVersion = '9.3.0'
+    luceneVersion = '10.3.2'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-api:${esVersion}"
+    compileOnly "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${esVersion}"
+    compileOnly "org.apache.lucene:lucene-core:${luceneVersion}"
+    compileOnly "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
+
+    testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-api:${esVersion}"
+    testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${esVersion}"
+    testImplementation "org.apache.lucene:lucene-core:${luceneVersion}"
+    testImplementation "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('bundlePlugin', Zip) {
+    dependsOn jar
+
+    archiveBaseName = 'analysis-hangul-jamo'
+    archiveVersion = version
+    archiveExtension = 'zip'
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+
+    from(jar.archiveFile)
+
+    from('src/main/plugin-metadata') {
+        include 'stable-plugin-descriptor.properties'
+        include 'named_components.json'
+    }
+}
+
+tasks.named('build') {
+    dependsOn 'bundlePlugin'
+}

@@ -1,0 +1,6 @@
+{
+  "org.elasticsearch.plugin.analysis.TokenFilterFactory": {
+    "hangul_jamo": "kr.jemi.hangul.HangulJamoTokenFilterFactory",
+    "hangul_chosung": "kr.jemi.hangul.HangulChosungTokenFilterFactory"
+  }
+}
