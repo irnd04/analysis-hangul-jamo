@@ -77,9 +77,7 @@ Kibana (http://localhost:5601) → Management → Dev Tools에서 실행:
 | `chosung_index` | 단어별 초성 추출 + edge_ngram (인덱싱용) | "아디다스 운동화" → [ㅇ, ㅇㄷ, ㅇㄷㄷ, ...], [ㅇ, ㅇㄷ, ...] |
 | `chosung_search` | 단어별 초성 추출 (검색용) | "ㅇㄷㅎ" → "ㅇㄷㅎ"                                |
 | `jamo_full_index` | 공백 제거 + 전체 자모 분해 + edge_ngram (인덱싱용) | "아디다스 운동화" → [ㅇ, ㅇㅏ, ..., ㅇㅏㄷㅣㄷㅏㅅㅡㅇㅜㄴㄷㅗㅇㅎㅘ]  |
-| `jamo_full_search` | 공백 제거 + 전체 자모 분해 (검색용) | "아디다스운" → "ㅇㅏㄷㅣㄷㅏㅅㅡㅇㅜㄴ"                      |
 | `chosung_full_index` | 공백 제거 + 전체 초성 추출 + edge_ngram (인덱싱용) | "아디다스 운동화" → [ㅇ, ㅇㄷ, ..., ㅇㄷㄷㅅㅇㄷㅎ]           |
-| `chosung_full_search` | 공백 제거 + 전체 초성 추출 (검색용) | "ㅇㄷㄷㅅ ㅇㄷㅎ" → "ㅇㄷㄷㅅㅇㄷㅎ"                        |
 
 ### 인덱스 생성
 
@@ -97,11 +95,9 @@ PUT /korean_search
         "jamo_index": { "tokenizer": "standard", "filter": ["hangul_jamo", "jamo_ngram"] },
         "jamo_search": { "tokenizer": "standard", "filter": ["hangul_jamo"] },
         "chosung_index": { "tokenizer": "standard", "filter": ["hangul_chosung", "chosung_ngram"] },
-        "chosung_search": { "tokenizer": "standard", "filter": ["hangul_chosung"] },
+        "chosung_search": { "tokenizer": "standard" },
         "jamo_full_index": { "tokenizer": "keyword", "filter": ["remove_whitespace", "hangul_jamo", "jamo_ngram"] },
-        "jamo_full_search": { "tokenizer": "keyword", "filter": ["remove_whitespace", "hangul_jamo"] },
-        "chosung_full_index": { "tokenizer": "keyword", "filter": ["remove_whitespace", "hangul_chosung", "chosung_ngram"] },
-        "chosung_full_search": { "tokenizer": "keyword", "filter": ["remove_whitespace", "hangul_chosung"] }
+        "chosung_full_index": { "tokenizer": "keyword", "filter": ["remove_whitespace", "hangul_chosung", "chosung_ngram"] }
       }
     }
   },
@@ -112,8 +108,8 @@ PUT /korean_search
         "fields": {
           "jamo": { "type": "text", "analyzer": "jamo_index", "search_analyzer": "jamo_search" },
           "chosung": { "type": "text", "analyzer": "chosung_index", "search_analyzer": "chosung_search" },
-          "jamo_full": { "type": "text", "analyzer": "jamo_full_index", "search_analyzer": "jamo_full_search" },
-          "chosung_full": { "type": "text", "analyzer": "chosung_full_index", "search_analyzer": "chosung_full_search" }
+          "jamo_full": { "type": "text", "analyzer": "jamo_full_index", "search_analyzer": "jamo_search" },
+          "chosung_full": { "type": "text", "analyzer": "chosung_full_index", "search_analyzer": "chosung_search" }
         }
       }
     }
@@ -142,12 +138,18 @@ GET /korean_search/_search
 { "query": { "multi_match": { "query": "잊", "fields": ["name.jamo^2", "name.chosung"] } } }
 
 GET /korean_search/_search
-{ "query": { "multi_match": { "query": "운ㄷ", "fields": ["name.jamo^2", "name.chosung"] } } }
+{ "query": { "multi_match": { "query": "아디닷", "fields": ["name.jamo", "name.chosung"] } } }
+
+GET /korean_search/_search
+{ "query": { "multi_match": { "query": "ㅇㄷㄷㅅ", "fields": ["name.jamo", "name.chosung"] } } }
+
+GET /korean_search/_search
+{ "query": { "multi_match": { "query": "ㅇㄷㄷㅅ ㅇㄷㅎ", "fields": ["name.jamo", "name.chosung"] } } }
 
 // 전체 문자열 검색 (붙여서 검색)
 GET /korean_search/_search
-{ "query": { "multi_match": { "query": "ㅇㄷㄷㅅㅇㄷㅎ", "fields": ["name.chosung_full"] } } }
+{ "query": { "multi_match": { "query": "ㅇㄷㄷㅅㅇㄷㅎ", "fields": ["name.jamo", "name.chosung", "name.jamo_full", "name.chosung_full"] } } }
 
 GET /korean_search/_search
-{ "query": { "multi_match": { "query": "아디다스운동화", "fields": ["name.jamo_full"] } } }
+{ "query": { "multi_match": { "query": "아디다스운동화", "fields": ["name.jamo", "name.chosung", "name.jamo_full", "name.chosung_full"] } } }
 ```
