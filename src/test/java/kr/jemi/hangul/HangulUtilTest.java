@@ -13,6 +13,20 @@ class HangulUtilTest {
     }
 
     @Test
+    void decompose_이재수_종성없는음절포함() {
+        char[] input = "이재수".toCharArray();
+        char[] result = HangulUtil.decompose(input, input.length);
+        assertEquals("ㅇㅣㅈㅐㅅㅜ", new String(result));
+    }
+
+    @Test
+    void decompose_김점숙_모든음절에종성있음() {
+        char[] input = "김점숙".toCharArray();
+        char[] result = HangulUtil.decompose(input, input.length);
+        assertEquals("ㄱㅣㅁㅈㅓㅁㅅㅜㄱ", new String(result));
+    }
+
+    @Test
     void decompose_mixed() {
         char[] input = "A이B".toCharArray();
         assertEquals("AㅇㅣB", new String(HangulUtil.decompose(input, input.length)));

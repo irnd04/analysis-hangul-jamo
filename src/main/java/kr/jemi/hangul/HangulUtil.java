@@ -37,9 +37,6 @@ public final class HangulUtil {
                 buf[pos++] = c;
             }
         }
-        if (pos == buf.length) {
-            return buf;
-        }
         char[] result = new char[pos];
         System.arraycopy(buf, 0, result, 0, pos);
         return result;
