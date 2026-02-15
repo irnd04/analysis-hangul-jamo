@@ -42,7 +42,6 @@ dependencies {
     testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-api:${esVersion}"
     testImplementation "org.elasticsearch.plugin:elasticsearch-plugin-analysis-api:${esVersion}"
     testImplementation "org.apache.lucene:lucene-core:${luceneVersion}"
-    testImplementation "org.apache.lucene:lucene-analysis-common:${luceneVersion}"
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'

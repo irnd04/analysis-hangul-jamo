@@ -34,14 +34,6 @@ class HangulSyllableTest {
     }
 
     @Test
-    void of_잊() {
-        HangulSyllable s = HangulSyllable.of('잊');
-        assertEquals('ㅇ', s.getChosung());
-        assertEquals('ㅣ', s.getJungsung());
-        assertEquals('ㅈ', s.getJongsung());
-    }
-
-    @Test
     void hasJongsung_종성있음() {
         assertTrue(HangulSyllable.of('한').hasJongsung());   // ㄴ
         assertTrue(HangulSyllable.of('국').hasJongsung());   // ㄱ

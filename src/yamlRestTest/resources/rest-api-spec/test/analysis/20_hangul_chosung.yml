@@ -1,0 +1,78 @@
+---
+"hangul_chosung 한글 음절에서 초성을 추출한다":
+  - do:
+      indices.analyze:
+        body:
+          text: "이재국"
+          tokenizer: standard
+          filter:
+            - type: hangul_chosung
+  - length: { tokens: 1 }
+  - match:  { tokens.0.token: "ㅇㅈㄱ" }
+
+---
+"hangul_chosung 비한글 텍스트는 그대로 통과한다":
+  - do:
+      indices.analyze:
+        body:
+          text: "hello"
+          tokenizer: standard
+          filter:
+            - type: hangul_chosung
+  - length: { tokens: 1 }
+  - match:  { tokens.0.token: "hello" }
+
+---
+"hangul_chosung 초성 검색으로 문서를 찾는다":
+  - do:
+      indices.create:
+        index: test_chosung
+        body:
+          settings:
+            analysis:
+              analyzer:
+                chosung_analyzer:
+                  tokenizer: standard
+                  filter:
+                    - hangul_chosung
+          mappings:
+            properties:
+              name:
+                type: text
+                analyzer: chosung_analyzer
+  - do:
+      index:
+        index: test_chosung
+        id: "1"
+        body: { "name": "아디다스 운동화" }
+        refresh: true
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: test_chosung
+        body:
+          query:
+            match:
+              name: "ㅇㄷㅎ"
+  - match: { hits.total: 1 }
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: test_chosung
+        body:
+          query:
+            match:
+              name: "ㅇㄷㄷㅅ"
+  - match: { hits.total: 1 }
+
+  - do:
+      search:
+        rest_total_hits_as_int: true
+        index: test_chosung
+        body:
+          query:
+            match:
+              name: "ㄴㅇㅋ"
+  - match: { hits.total: 0 }
